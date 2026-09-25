@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCMUTE - Trắc Nghiệm Pháp Luật Đại Cương (Nhóm 4 - Quyền Nhân Thân Về Hình Ảnh)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti library for correct answer effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        hcmute: {
+                            maroon: '#80222b',
+                            maroonDark: '#5a131b',
+                            maroonLight: '#a02e3a',
+                            gold: '#d4af37',
+                            goldLight: '#f3e5ab',
+                            cream: '#fbf9f4',
+                            slateDark: '#221919'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f4f0e8;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Dong Son Bronze Drum Watermark Pattern Background */
+        .bg-dongson-pattern {
+            background-color: #fbf9f4;
+            background-image: 
+                radial-gradient(#80222b 0.65px, transparent 0.65px), 
+                radial-gradient(#80222b 0.65px, #fbf9f4 0.65px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+        }
+
+        .dongson-watermark {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.08;
+        }
+
+        /* Standard 16:9 PowerPoint Slide Ratio Container */
+        .slide-container {
+            width: 100%;
+            max-width: 1280px;
+            aspect-ratio: 16 / 9;
+            max-height: calc(100vh - 100px);
+        }
+
+        @media (max-aspect-ratio: 16/9) {
+            .slide-container {
+                aspect-ratio: auto;
+                height: auto;
+                max-height: none;
+            }
+        }
+
+        /* Mascot Floating Animation */
+        @keyframes floatMascot {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-7px) rotate(3deg); }
+        }
+        .animate-mascot {
+            animation: floatMascot 3.2s ease-in-out infinite;
+        }
+
+        /* Shake animation for incorrect answer choice */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.35s ease-in-out;
+        }
+
+        /* Pop animation for correct answer choice */
+        @keyframes pop {
+            0% { transform: scale(0.98); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: pop 0.3s ease-out;
+        }
+
+        /* Custom Scrollbar */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.03);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #80222b;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-dongson-pattern text-hcmute-slateDark font-sans min-h-screen flex flex-col justify-between overflow-x-hidden relative">
+
+    <!-- Dong Son Drum Decorative SVG Watermarks -->
+    <div class="dongson-watermark top-[-60px] left-[-60px] w-[500px] h-[500px]">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="95" fill="none" stroke="#80222b" stroke-width="2"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#80222b" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <circle cx="100" cy="100" r="60" fill="none" stroke="#80222b" stroke-width="1"/>
+            <polygon points="100,10 110,40 140,40 115,60 125,90 100,70 75,90 85,60 60,40 90,40" fill="#80222b" />
+        </svg>
+    </div>
+    <div class="dongson-watermark bottom-[-80px] right-[-80px] w-[550px] h-[550px]">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="95" fill="none" stroke="#80222b" stroke-width="2"/>
+            <circle cx="100" cy="100" r="75" fill="none" stroke="#80222b" stroke-width="1" stroke-dasharray="4,2"/>
+            <circle cx="100" cy="100" r="45" fill="none" stroke="#80222b" stroke-width="1.5"/>
+        </svg>
+    </div>
+
+    <!-- Application PowerPoint Top Bar -->
+    <header class="bg-gradient-to-r from-hcmute-maroonDark via-hcmute-maroon to-hcmute-maroonLight text-white shadow-xl relative z-20 py-2.5 px-4 sm:px-6 border-b-2 border-hcmute-gold">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Left Branding -->
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-1.5 rounded-full shadow-md w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center border-2 border-hcmute-gold shrink-0">
+                    <i class="fa-solid fa-scale-balanced text-hcmute-maroon text-lg sm:text-2xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] sm:text-xs font-black tracking-wider uppercase bg-hcmute-gold text-hcmute-maroonDark px-2 py-0.5 rounded shadow-sm">HCM-UTE</span>
+                        <span class="text-[11px] sm:text-xs text-red-100 hidden md:inline font-bold">Trường ĐH Sư Phạm Kỹ Thuật TP.HCM</span>
+                    </div>
+                    <h1 class="text-sm sm:text-lg font-black font-serif tracking-tight leading-none mt-0.5">
+                        PHÁP LUẬT ĐẠI CƯỜNG <span class="text-hcmute-goldLight font-sans text-xs font-semibold uppercase ml-1 block sm:inline">| BÀI THUYẾT TRÌNH NHÓM 4</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Right Controls -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Sound Toggle -->
+                <button id="btn-sound" title="Bật/Tắt Âm Thanh" class="bg-white/10 hover:bg-white/20 text-white p-2 sm:px-3 sm:py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-white/20">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-hcmute-gold"></i>
+                    <span class="hidden sm:inline">Âm thanh</span>
+                </button>
+
+                <!-- Fullscreen Toggle -->
+                <button id="btn-fullscreen" title="Toàn Màn Hình" class="bg-hcmute-gold text-hcmute-maroonDark hover:bg-yellow-400 font-extrabold px-3 py-1.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 shadow-md border border-amber-300">
+                    <i class="fa-solid fa-expand"></i>
+                    <span class="hidden sm:inline">Toàn màn hình</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Presentation Slide Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-2 sm:p-4 md:p-6 flex flex-col justify-center items-center relative z-10">
+
+        <!-- 16:9 Widescreen Slide Card -->
+        <div class="slide-container bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-2 border-hcmute-maroon/30 flex flex-col justify-between overflow-hidden relative p-4 sm:p-6 md:p-8">
+            
+            <!-- Cute Chibi Mascot Graphic (Top-Right Slide) -->
+            <div class="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 flex items-center gap-2 pointer-events-none">
+                <div class="bg-hcmute-cream/95 border border-hcmute-gold px-3 py-1 rounded-full text-[11px] font-extrabold text-hcmute-maroon shadow-md hidden sm:block">
+                    Quyền nhân thân về hình ảnh
+                </div>
+                <!-- Cute Mascot SVG -->
+                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-full border-2 border-hcmute-gold flex items-center justify-center shadow-lg animate-mascot">
+                    <svg viewBox="0 0 100 100" class="w-10 h-10 sm:w-14 sm:h-14">
+                        <circle cx="50" cy="50" r="42" fill="#ffffff" stroke="#80222b" stroke-width="3"/>
+                        <circle cx="28" cy="56" r="7" fill="#ffb6c1" opacity="0.8"/>
+                        <circle cx="72" cy="56" r="7" fill="#ffb6c1" opacity="0.8"/>
+                        <ellipse cx="36" cy="46" rx="4" ry="6" fill="#2c1819"/>
+                        <ellipse cx="64" cy="46" rx="4" ry="6" fill="#2c1819"/>
+                        <circle cx="38" cy="44" r="1.5" fill="#ffffff"/>
+                        <circle cx="66" cy="44" r="1.5" fill="#ffffff"/>
+                        <path d="M 40 60 Q 50 70 60 60" fill="none" stroke="#80222b" stroke-width="3.5" stroke-linecap="round"/>
+                        <polygon points="50,12 80,24 50,36 20,24" fill="#80222b"/>
+                        <polygon points="35,29 35,42 65,42 65,29" fill="#5a131b"/>
+                        <circle cx="80" cy="24" r="3" fill="#d4af37"/>
+                        <line x1="80" y1="24" x2="85" y2="38" stroke="#d4af37" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Slide Top Meta Line -->
+            <div class="flex flex-wrap items-center justify-between border-b border-gray-200 pb-3 mb-2 pr-16 sm:pr-40">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <span id="question-badge" class="bg-hcmute-maroon text-white font-black text-xs sm:text-sm px-3.5 py-1 rounded-full shadow">
+                        CÂU 01 / 10
+                    </span>
+                    <span class="text-xs sm:text-sm font-bold text-hcmute-maroon/90 bg-red-50 px-3 py-1 rounded-lg border border-red-200">
+                        BỘ LUẬT DÂN SỰ 2015
+                    </span>
+                </div>
+                
+                <div id="live-status" class="text-xs sm:text-sm font-bold text-gray-500 flex items-center gap-1.5 mt-1 sm:mt-0">
+                    <i class="fa-regular fa-lightbulb text-hcmute-gold"></i>
+                    <span>Chọn 1 đáp án để xem kết quả ngay</span>
+                </div>
+            </div>
+
+            <!-- Question & Dynamic Options Container -->
+            <div class="flex-grow flex flex-col justify-center my-2 overflow-y-auto custom-scroll pr-1">
+                <!-- Question Title -->
+                <h2 id="question-text" class="text-base sm:text-lg md:text-xl font-extrabold text-hcmute-slateDark leading-snug mb-3 sm:mb-5">
+                    Đang tải câu hỏi...
+                </h2>
+
+                <!-- Options Grid -->
+                <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3.5">
+                    <!-- Dynamic Answer Buttons rendered by JS -->
+                </div>
+
+                <!-- Instant Legal Basis Explanation Box -->
+                <div id="explanation-box" class="hidden mt-3 p-3.5 sm:p-4 bg-amber-50/95 border-l-4 border-hcmute-gold rounded-2xl shadow-md text-xs sm:text-sm text-gray-800 transition-all duration-300">
+                    <div class="flex items-center justify-between font-extrabold text-hcmute-maroon mb-1">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-scale-unbalanced-flip text-hcmute-gold"></i> CĂN CỨ PHÁP LÝ & GIẢI THÍCH CHI TIẾT:</span>
+                        <span id="result-pill" class="text-[11px] px-2.5 py-0.5 rounded-md uppercase font-extrabold shadow-sm"></span>
+                    </div>
+                    <p id="explanation-text" class="leading-relaxed text-gray-700 font-medium">
+                        Giải thích điều luật sẽ hiển thị tại đây...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide Navigation & Progress Bar Footer -->
+            <div class="pt-3 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-3">
+                
+                <!-- Quick Question Jump Grid (1-10) -->
+                <div class="flex items-center gap-1.5 overflow-x-auto max-w-full py-1 custom-scroll" id="question-nav-grid">
+                    <!-- Dynamically generated number buttons 1..10 -->
+                </div>
+
+                <!-- Prev / Next Controls & Restart -->
+                <div class="flex items-center gap-2 ml-auto shrink-0">
+                    <button id="btn-restart" title="Làm lại từ đầu" class="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2.5 rounded-xl text-xs font-bold transition border border-gray-300">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span class="hidden sm:inline ml-1">Làm lại</span>
+                    </button>
+
+                    <button id="btn-prev" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-3.5 py-2 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed border border-gray-200">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>Câu trước</span>
+                    </button>
+                    
+                    <button id="btn-next" class="bg-hcmute-maroon hover:bg-hcmute-maroonDark text-white font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition shadow-md flex items-center gap-1.5 border border-hcmute-gold">
+                        <span>Câu tiếp</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+
+                    <button id="btn-finish" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition shadow-md flex items-center gap-1.5 border border-emerald-400">
+                        <i class="fa-solid fa-trophy"></i>
+                        <span>Tổng kết</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Quiz Summary Modal -->
+    <div id="summary-modal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border-4 border-hcmute-gold relative animate-pop">
+            <div class="w-20 h-20 bg-hcmute-maroon/10 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-hcmute-gold">
+                <i class="fa-solid fa-award text-5xl text-hcmute-gold"></i>
+            </div>
+
+            <h2 class="text-2xl font-black font-serif text-hcmute-maroon mb-1">KẾT QUẢ THUYẾT TRÌNH</h2>
+            <p class="text-xs text-gray-500 mb-5 font-bold uppercase tracking-wider">Môn Pháp Luật Đại Cương - Nhóm 4</p>
+
+            <div class="bg-hcmute-cream rounded-2xl p-5 mb-5 border border-hcmute-gold/40 shadow-inner">
+                <div class="text-5xl font-black text-hcmute-maroon mb-1" id="summary-score">0 / 10</div>
+                <div class="text-xs font-bold text-gray-700" id="summary-feedback">Hoàn thành bài thuyết trình</div>
+                
+                <div class="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-gray-200 text-xs font-bold">
+                    <div class="bg-emerald-50 text-emerald-800 p-2.5 rounded-xl border border-emerald-200">
+                        <div class="text-lg font-black" id="summary-correct">0</div>
+                        <span>CÂU ĐÚNG</span>
+                    </div>
+                    <div class="bg-rose-50 text-rose-800 p-2.5 rounded-xl border border-rose-200">
+                        <div class="text-lg font-black" id="summary-wrong">0</div>
+                        <span>CÂU SAI</span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btn-restart-modal" class="w-full bg-hcmute-maroon hover:bg-hcmute-maroonDark text-white font-extrabold py-3 rounded-2xl text-sm transition shadow-lg flex items-center justify-center gap-2 border border-hcmute-gold">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Làm lại bài thuyết trình</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-hcmute-maroonDark text-white/70 py-2 px-4 text-center text-[11px] border-t border-hcmute-gold/30">
+        <p>© TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HCM (HCMUTE) - BÀI THUYẾT TRÌNH NHÓM 4 - PHÁP LUẬT ĐẠI CƯỜNG</p>
+    </footer>
+
+    <script>
+        // Web Audio Feedback Generator
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let soundEnabled = true;
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.18); // G5
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            }
+        }
+
+        // Exact 10 Questions provided by user
+        const QUESTIONS = [
+            {
+                id: 1,
+                question: "Câu 1: Quyền đối với hình ảnh của cá nhân thuộc loại quyền nào sau đây theo Bộ luật Dân sự 2015?",
+                options: [
+                    "A. Quyền tài sản.",
+                    "B. Quyền nhân thân.",
+                    "C. Quyền sở hữu trí tuệ.",
+                    "D. Quyền nghĩa vụ dân sự."
+                ],
+                answer: 1, // B
+                explanation: "Căn cứ Điều 32 Bộ luật Dân sự 2015: Quyền đối với hình ảnh là một trong các quyền nhân thân của cá nhân, gắn liền với mỗi cá nhân và không thể chuyển giao cho người khác trừ trường hợp luật có quy định khác."
+            },
+            {
+                id: 2,
+                question: "Câu 2: Theo quy định của Bộ luật Dân sự 2015, việc sử dụng hình ảnh của cá nhân phải được sự đồng ý của ai?",
+                options: [
+                    "A. Cơ quan Công an nơi người đó cư trú.",
+                    "B. Người có hình ảnh đó hoặc người đại diện theo pháp luật của họ (nếu họ là người chưa thành niên, người mất năng lực hành vi dân sự...).",
+                    "C. Chủ sở hữu máy ảnh/thiết bị ghi hình.",
+                    "D. Bất kỳ người thân nào trong gia đình."
+                ],
+                answer: 1, // B
+                explanation: "Khoản 1 Điều 32 BLDS 2015 quy định rõ: Việc sử dụng hình ảnh của cá nhân phải được sự đồng ý của người đó hoặc người đại diện theo pháp luật của họ."
+            },
+            {
+                id: 3,
+                question: "Câu 3: Việc sử dụng hình ảnh vì mục đích thương mại thì phải trả thù lao cho người có hình ảnh, trừ trường hợp nào?",
+                options: [
+                    "A. Khi hình ảnh được chụp ở nơi công cộng.",
+                    "B. Khi người chụp ảnh là nhiếp ảnh gia chuyên nghiệp.",
+                    "C. Khi các bên có thỏa thuận khác.",
+                    "D. Khi hình ảnh được đăng tải trên mạng xã hội."
+                ],
+                answer: 2, // C
+                explanation: "Khoản 1 Điều 32 BLDS 2015 quy định: Việc sử dụng hình ảnh vào mục đích thương mại thì phải trả thù lao cho người có hình ảnh, trừ trường hợp các bên có thỏa thuận khác."
+            },
+            {
+                id: 4,
+                question: "Câu 4: Trường hợp nào sau đây việc sử dụng hình ảnh cá nhân KHÔNG CẦN sự đồng ý của người có hình ảnh hoặc người đại diện của họ?",
+                options: [
+                    "A. Sử dụng hình ảnh để quảng cáo cho một sản phẩm thương mại.",
+                    "B. Sử dụng hình ảnh từ các hoạt động đông người tại nơi công cộng mà không làm tổn hại đến danh dự, nhân phẩm, uy tín của người có hình ảnh.",
+                    "C. Sử dụng hình ảnh để in trên bao bì sản phẩm bán ra thị trường.",
+                    "D. Sử dụng hình ảnh đăng tải trên báo chí để tạo sự chú ý mà chưa có sự cho phép."
+                ],
+                answer: 1, // B
+                explanation: "Điểm b Khoản 2 Điều 32 BLDS 2015 quy định: Hình ảnh được sử dụng từ các hoạt động công cộng (hội nghị, thi đấu thể thao, biểu diễn...) mà không làm tổn hại đến danh dự, nhân phẩm, uy tín của người có hình ảnh thì KHÔNG CẦN sự đồng ý."
+            },
+            {
+                id: 5,
+                question: "Câu 5: Việc sử dụng hình ảnh vì lợi ích quốc gia, dân tộc, lợi ích công cộng có cần sự đồng ý của người có hình ảnh hay không?",
+                options: [
+                    "A. Bắt buộc phải có sự đồng ý bằng văn bản.",
+                    "B. Không cần sự đồng ý của người có hình ảnh.",
+                    "C. Bắt buộc phải trả thù lao cao.",
+                    "D. Chỉ cần sự đồng ý của UBND cấp xã/phường."
+                ],
+                answer: 1, // B
+                explanation: "Điểm a Khoản 2 Điều 32 BLDS 2015 cho phép: Hình ảnh được sử dụng vì lợi ích quốc gia, dân tộc, lợi ích công cộng thì không cần có sự đồng ý của người có hình ảnh hoặc người đại diện."
+            },
+            {
+                id: 6,
+                question: "Câu 6: Khi bị người khác sử dụng hình ảnh trái pháp luật làm xâm phạm đến danh dự, nhân phẩm, uy tín của mình, cá nhân có quyền gì?",
+                options: [
+                    "A. Yêu cầu Tòa án ra quyết định buộc người vi phạm thu hồi, tiêu hủy, chấm dứt việc sử dụng hình ảnh.",
+                    "B. Yêu cầu bồi thường thiệt hại theo quy định của pháp luật.",
+                    "C. Yêu cầu người vi phạm xin lỗi, cải chính công khai.",
+                    "D. Tất cả các phương án trên."
+                ],
+                answer: 3, // D
+                explanation: "Khoản 3 Điều 32 BLDS 2015 quy định cá nhân bị xâm phạm có quyền yêu cầu Tòa án ra quyết định buộc thu hồi, tiêu hủy, chấm dứt sử dụng, bồi thường thiệt hại và xin lỗi, cải chính công khai."
+            },
+            {
+                id: 7,
+                question: "Câu 7: A tự ý lấy ảnh cá nhân của B trên Facebook rồi ghép vào bài viết quảng cáo kem trị mụn mà không hỏi ý kiến B. Hành vi của A đã vi phạm điều gì?",
+                options: [
+                    "A. Vi phạm quyền đối với hình ảnh của B.",
+                    "B. Vi phạm quyền sở hữu công nghiệp.",
+                    "C. Không vi phạm vì ảnh B đã đăng công khai trên mạng xã hội.",
+                    "D. Chỉ vi phạm nếu B là người nổi tiếng."
+                ],
+                answer: 0, // A
+                explanation: "Căn cứ Điều 32 BLDS 2015, tự ý lấy hình ảnh cá nhân của người khác để quảng cáo thương mại khi chưa được sự đồng ý là hành vi vi phạm pháp luật về quyền đối với hình ảnh."
+            },
+            {
+                id: 8,
+                question: "Câu 8: Trong một hội nghị chuyên đề được tổ chức công khai, phóng viên chụp ảnh toàn cảnh hội trường (có rõ mặt ông X). Phóng viên đăng bức ảnh đó lên bài báo đưa tin về hội nghị. Hành vi này:",
+                options: [
+                    "A. Vi phạm quyền hình ảnh của ông X vì chưa xin phép ông X.",
+                    "B. Không vi phạm vì hình ảnh được sử dụng từ hoạt động công cộng và không làm tổn hại đến danh dự, nhân phẩm của ông X.",
+                    "C. Vi phạm vì không trả thù lao cho ông X.",
+                    "D. Chỉ vi phạm nếu ông X không phải là cán bộ nhà nước."
+                ],
+                answer: 1, // B
+                explanation: "Theo Điểm b Khoản 2 Điều 32 BLDS 2015, chụp và đưa ảnh toàn cảnh hội nghị công khai để đưa tin tức đại chúng mà không làm ảnh hưởng danh dự cá nhân là hoàn toàn hợp pháp."
+            },
+            {
+                id: 9,
+                question: "Câu 9: Khi người có hình ảnh đã chết, việc cho phép sử dụng hình ảnh của người đó (trừ trường hợp pháp luật có quy định khác) thuộc về ai?",
+                options: [
+                    "A. Vợ, chồng hoặc con đã thành niên của người đó; nếu không có thì là cha, mẹ của người chết.",
+                    "B. Bất kỳ người thân nào trong thừa kế hàng thứ nhất hoặc thứ hai.",
+                    "C. UBND cấp xã nơi người chết cư trú lúc sống.",
+                    "D. Không ai có quyền cho phép, hình ảnh đương nhiên thuộc về cộng đồng."
+                ],
+                answer: 0, // A
+                explanation: "Trích Khoản 1 Điều 32 BLDS 2015: Trường hợp người có hình ảnh đã chết thì việc sử dụng hình ảnh của họ phải được sự đồng ý của vợ, chồng hoặc con đã thành niên; nếu không có những người này thì phải được sự đồng ý của cha, mẹ của người chết."
+            },
+            {
+                id: 10,
+                question: "Câu 10: Theo Bộ luật Dân sự 2015, quyền nhân thân đối với hình ảnh của cá nhân là:",
+                options: [
+                    "A. Quyền gắn liền với mỗi cá nhân, không thể chuyển giao cho người khác, trừ trường hợp luật khác có quy định khác.",
+                    "B. Quyền có thể bán, tặng cho hoặc thế chấp ngân hàng.",
+                    "C. Quyền chỉ phát sinh khi cá nhân đủ 18 tuổi.",
+                    "D. Quyền chỉ áp dụng đối với công dân Việt Nam."
+                ],
+                answer: 0, // A
+                explanation: "Theo Điều 25 BLDS 2015: Quyền nhân thân là quyền dân sự gắn liền với mỗi cá nhân, không thể chuyển giao cho người khác, trừ trường hợp luật khác có quy định khác."
+            }
+        ];
+
+        // State Variables
+        let currentIndex = 0;
+        let userAnswers = {};
+
+        // DOM Elements
+        const qBadge = document.getElementById('question-badge');
+        const qText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const expBox = document.getElementById('explanation-box');
+        const expText = document.getElementById('explanation-text');
+        const resultPill = document.getElementById('result-pill');
+        const liveStatus = document.getElementById('live-status');
+        const navGrid = document.getElementById('question-nav-grid');
+
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnFinish = document.getElementById('btn-finish');
+        const btnRestart = document.getElementById('btn-restart');
+        const summaryModal = document.getElementById('summary-modal');
+
+        // Render Quick Navigation Bar 1..10
+        function renderNavGrid() {
+            navGrid.innerHTML = '';
+            QUESTIONS.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center transition border shrink-0 `;
+                
+                const isCurrent = idx === currentIndex;
+                const hasAnswered = userAnswers.hasOwnProperty(idx);
+                const isCorrect = hasAnswered && userAnswers[idx] === q.answer;
+
+                if (isCurrent) {
+                    btn.classList.add('ring-2', 'ring-hcmute-gold', 'ring-offset-1');
+                }
+
+                if (hasAnswered) {
+                    if (isCorrect) {
+                        btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-700');
+                    } else {
+                        btn.classList.add('bg-rose-600', 'text-white', 'border-rose-700');
+                    }
+                } else {
+                    btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'border-gray-300');
+                }
+
+                btn.textContent = idx + 1;
+                btn.onclick = () => renderSlide(idx);
+                navGrid.appendChild(btn);
+            });
+        }
+
+        // Render Current Slide Question
+        function renderSlide(index) {
+            currentIndex = index;
+            const q = QUESTIONS[currentIndex];
+
+            qBadge.textContent = `CÂU ${String(currentIndex + 1).padStart(2, '0')} / ${QUESTIONS.length}`;
+            qText.textContent = q.question;
+
+            renderNavGrid();
+
+            optionsContainer.innerHTML = '';
+            const hasAnswered = userAnswers.hasOwnProperty(currentIndex);
+            const selectedOptIndex = userAnswers[currentIndex];
+
+            q.options.forEach((optText, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-3.5 sm:p-4 rounded-2xl border-2 font-semibold text-xs sm:text-sm md:text-base transition-all duration-200 flex items-center justify-between shadow-sm relative overflow-hidden`;
+
+                if (!hasAnswered) {
+                    btn.classList.add('border-gray-200', 'bg-white', 'hover:border-hcmute-maroon', 'hover:bg-red-50/60', 'text-gray-800');
+                    btn.onclick = () => selectOption(optIndex);
+                    btn.innerHTML = `
+                        <span class="z-10">${optText}</span>
+                        <div class="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-xs font-bold shrink-0 ml-2 z-10 text-gray-400">${String.fromCharCode(65 + optIndex)}</div>
+                    `;
+                } else {
+                    btn.disabled = true;
+
+                    if (optIndex === q.answer) {
+                        btn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900', 'font-bold', 'animate-pop');
+                        btn.innerHTML = `
+                            <span class="z-10">${optText}</span>
+                            <span class="text-emerald-600 font-extrabold text-xl ml-2 z-10"><i class="fa-solid fa-circle-check"></i></span>
+                        `;
+                    } else if (optIndex === selectedOptIndex && selectedOptIndex !== q.answer) {
+                        btn.classList.add('border-rose-500', 'bg-rose-50', 'text-rose-900', 'font-bold', 'animate-shake');
+                        btn.innerHTML = `
+                            <span class="z-10">${optText}</span>
+                            <span class="text-rose-600 font-extrabold text-xl ml-2 z-10"><i class="fa-solid fa-circle-xmark"></i></span>
+                        `;
+                    } else {
+                        btn.classList.add('border-gray-100', 'bg-gray-50', 'text-gray-400', 'opacity-60');
+                        btn.innerHTML = `<span class="z-10">${optText}</span>`;
+                    }
+                }
+
+                optionsContainer.appendChild(btn);
+            });
+
+            // Handle Explanation & Status display
+            if (hasAnswered) {
+                expBox.classList.remove('hidden');
+                expText.textContent = q.explanation;
+
+                if (selectedOptIndex === q.answer) {
+                    resultPill.textContent = "ĐÁP ÁN CHÍNH XÁC";
+                    resultPill.className = "text-[11px] px-2.5 py-0.5 rounded uppercase font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300";
+                    liveStatus.innerHTML = `<span class="text-emerald-600 font-bold flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Bạn trả lời ĐÚNG</span>`;
+                } else {
+                    resultPill.textContent = "CHƯA CHÍNH XÁC";
+                    resultPill.className = "text-[11px] px-2.5 py-0.5 rounded uppercase font-extrabold bg-rose-100 text-rose-800 border border-rose-300";
+                    liveStatus.innerHTML = `<span class="text-rose-600 font-bold flex items-center gap-1"><i class="fa-solid fa-circle-xmark"></i> Bạn trả lời SAI</span>`;
+                }
+            } else {
+                expBox.classList.add('hidden');
+                liveStatus.innerHTML = `<i class="fa-regular fa-lightbulb text-hcmute-gold"></i><span>Chọn 1 đáp án để xem kết quả ngay</span>`;
+            }
+
+            // Navigation Button States
+            btnPrev.disabled = currentIndex === 0;
+
+            if (currentIndex === QUESTIONS.length - 1) {
+                btnNext.classList.add('hidden');
+                btnFinish.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnFinish.classList.add('hidden');
+            }
+        }
+
+        // Handle Instant Option Selection
+        function selectOption(optIndex) {
+            userAnswers[currentIndex] = optIndex;
+            const isCorrect = optIndex === QUESTIONS[currentIndex].answer;
+
+            playSound(isCorrect ? 'correct' : 'wrong');
+
+            if (isCorrect && window.confetti) {
+                confetti({
+                    particleCount: 45,
+                    spread: 70,
+                    origin: { y: 0.7 }
+                });
+            }
+
+            renderSlide(currentIndex);
+        }
+
+        // Controls Bindings
+        function initControls() {
+            btnPrev.addEventListener('click', () => {
+                if (currentIndex > 0) renderSlide(currentIndex - 1);
+            });
+
+            btnNext.addEventListener('click', () => {
+                if (currentIndex < QUESTIONS.length - 1) renderSlide(currentIndex + 1);
+            });
+
+            btnFinish.addEventListener('click', showSummary);
+
+            btnRestart.addEventListener('click', resetQuiz);
+            document.getElementById('btn-restart-modal').addEventListener('click', () => {
+                summaryModal.classList.add('hidden');
+                resetQuiz();
+            });
+
+            // Sound Toggle
+            document.getElementById('btn-sound').addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                const icon = document.getElementById('sound-icon');
+                icon.className = soundEnabled ? "fa-solid fa-volume-high text-hcmute-gold" : "fa-solid fa-volume-xmark text-gray-400";
+            });
+
+            // Fullscreen Toggle
+            document.getElementById('btn-fullscreen').addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log(`Error entering fullscreen: ${err.message}`);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            });
+
+            // Keyboard Presentation Shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (!summaryModal.classList.contains('hidden')) return;
+
+                if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+                    if (currentIndex < QUESTIONS.length - 1) renderSlide(currentIndex + 1);
+                } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                    if (currentIndex > 0) renderSlide(currentIndex - 1);
+                } else if (['1', '2', '3', '4'].includes(e.key) || ['a', 'b', 'c', 'd'].includes(e.key.toLowerCase())) {
+                    if (!userAnswers.hasOwnProperty(currentIndex)) {
+                        let optIdx = -1;
+                        if (e.key === '1' || e.key.toLowerCase() === 'a') optIdx = 0;
+                        if (e.key === '2' || e.key.toLowerCase() === 'b') optIdx = 1;
+                        if (e.key === '3' || e.key.toLowerCase() === 'c') optIdx = 2;
+                        if (e.key === '4' || e.key.toLowerCase() === 'd') optIdx = 3;
+                        if (optIdx >= 0 && optIdx < QUESTIONS[currentIndex].options.length) {
+                            selectOption(optIdx);
+                        }
+                    }
+                }
+            });
+        }
+
+        function resetQuiz() {
+            userAnswers = {};
+            renderSlide(0);
+        }
+
+        // Display Final Summary Modal
+        function showSummary() {
+            let correct = 0;
+            Object.keys(userAnswers).forEach(idx => {
+                if (userAnswers[idx] === QUESTIONS[idx].answer) correct++;
+            });
+
+            const total = QUESTIONS.length;
+            const wrong = Object.keys(userAnswers).length - correct;
+
+            document.getElementById('summary-score').textContent = `${correct} / ${total}`;
+            document.getElementById('summary-correct').textContent = correct;
+            document.getElementById('summary-wrong').textContent = wrong;
+
+            const feedback = document.getElementById('summary-feedback');
+            if (correct === 10) {
+                feedback.textContent = "Xuất sắc! Đạt điểm 10/10 Pháp luật đại cương!";
+            } else if (correct >= 7) {
+                feedback.textContent = "Rất tốt! Nhóm thuyết trình làm bài rất thành công.";
+            } else {
+                feedback.textContent = "Đã hoàn thành xong 10 câu hỏi bài thuyết trình!";
+            }
+
+            summaryModal.classList.remove('hidden');
+
+            if (correct >= 7 && window.confetti) {
+                confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 } });
+            }
+        }
+
+        // On Window Load Initializer
+        window.onload = function() {
+            renderSlide(0);
+            initControls();
+        };
+    </script>
+</body>
+</html>
